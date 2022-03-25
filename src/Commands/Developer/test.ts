@@ -4,6 +4,6 @@ export default new Command({
     name: "test",
     description: "Test Command",
     run: ({ interaction }) => {
-        //
+        interaction.followUp({content: "Test!"});
     }
 })

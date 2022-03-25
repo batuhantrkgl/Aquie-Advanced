@@ -1,4 +1,4 @@
-import { Client, ClientEvents, Collection } from "discord.js";
+import { Client, ClientEvents, Collection, Guild } from "discord.js";
 import { AquieClientOptions, CommandType } from '../typings/client';
 import { Event } from "./Event";
 import fs from 'fs';
@@ -58,7 +58,13 @@ export class AquieClient extends Client {
                 }
             }
 
-
+    }
+    /**
+     * 
+     * @param guild 
+     */
+    public registerCommands(guild:Guild) {
+        guild.commands.set(this.commandArray);
     }
     public Run() {
         this.loadModules();

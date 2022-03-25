@@ -1,4 +1,5 @@
-import { ChatInputApplicationCommandData, ClientOptions, CommandInteractionOptionResolver, GuildMember, Interaction } from "discord.js"
+import { ChatInputApplicationCommandData, ClientOptions, CommandInteraction, CommandInteractionOptionResolver, GuildMember } from "discord.js"
+import { AquieClient } from "../Structures/Client"
 
 export type AquieClientOptions = {
     token:string
@@ -6,10 +7,11 @@ export type AquieClientOptions = {
 
 export type ExtendedInteraction = {
     member:GuildMember
-} & Interaction
+} & CommandInteraction
 
 export type RunFunctionOptions = {
     interaction:ExtendedInteraction,
+    client:AquieClient,
     args:CommandInteractionOptionResolver
 }
 
