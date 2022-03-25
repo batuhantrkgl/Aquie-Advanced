@@ -1,13 +1,18 @@
-import { Client, ClientEvents } from "discord.js";
-import { AquieClientOptions } from '../typings/client';
+import { Client, ClientEvents, Collection } from "discord.js";
+import { AquieClientOptions, CommandType } from '../typings/client';
 import { Event } from "./Event";
 import fs from 'fs';
 
 export class AquieClient extends Client {
 
+    public commands:Collection<string, CommandType>
+    public commandArray:CommandType[];
+
     constructor(options:AquieClientOptions) {
         super(options);
         this.token = options.token;
+        this.commands = new Collection();
+        this.commandArray = [];
     }
 
     public log(message:string):void {
@@ -37,6 +42,22 @@ export class AquieClient extends Client {
                 this.on(event.name, event.run);
             }
         }
+        /*
+            Command Handler
+        */
+            const commandFolders = fs.readdirSync("./src/Commands/");
+        
+            for(const folder of commandFolders) {
+                const files = fs.readdirSync(`./src/Commands/${folder}`);
+    
+                for(const file of files) {
+                    const command:CommandType = await this.importFile(`../Commands/${folder}/${file}`);
+
+                    this.commands.set(command.name, command);
+                    this.commandArray.push(command);
+                }
+            }
+
 
     }
     public Run() {
