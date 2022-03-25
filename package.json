@@ -1,0 +1,24 @@
+{
+  "name": "aquie",
+  "version": "0.0.1",
+  "description": "Discord Music Bot",
+  "main": "index.ts",
+  "scripts": {
+    "start": "ts-node ./src/."
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/aquieover0/Aquie.git"
+  },
+  "keywords": ["discord-bot","discord-music-bot"],
+  "author": "ʖ | Aquie#3651",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/aquieover0/Aquie/issues"
+  },
+  "homepage": "https://github.com/aquieover0/Aquie#readme",
+  "dependencies": {
+    "ts-node": "^10.7.0",
+    "typescript": "^4.6.3"
+  }
+}
