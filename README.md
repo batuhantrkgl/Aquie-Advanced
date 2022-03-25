@@ -1,0 +1,2 @@
+# Aquie
+ Discord Music Bot
