@@ -10,7 +10,10 @@
     "type": "git",
     "url": "git+https://github.com/aquieover0/Aquie.git"
   },
-  "keywords": ["discord-bot","discord-music-bot"],
+  "keywords": [
+    "discord-bot",
+    "discord-music-bot"
+  ],
   "author": "ʖ | Aquie#3651",
   "license": "MIT",
   "bugs": {
@@ -18,6 +21,7 @@
   },
   "homepage": "https://github.com/aquieover0/Aquie#readme",
   "dependencies": {
+    "mongoose": "^6.2.8",
     "ts-node": "^10.7.0",
     "typescript": "^4.6.3"
   }

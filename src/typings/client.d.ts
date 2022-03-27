@@ -17,6 +17,18 @@ export type RunFunctionOptions = {
 
 export type RunFunction = (options:RunFunctionOptions) => any;
 
+export enum Permissions {
+    Default = 0,
+    AddToQueue = 1,
+    ViewQueue = 2,
+    ManagePlayer = 3,
+    ManageQueue = 4,
+    ManageServer = 5
+}
+
+export type PermissionsString = "Default" | "AddToQueue" | "ViewQueue" | "ManagePlayer" |  "ManageQueue" | "ManageServer"
+
 export type CommandType = {
+    permissions:Permissions | PermissionsString,
     run:RunFunction
 } & ChatInputApplicationCommandData
