@@ -1,8 +1,8 @@
 import { GuildMember, GuildMemberManager, Role } from "discord.js";
 import { client } from "../..";
 import { Command } from "../../Structures/Command";
-import { PermissionsString } from "../../typings/client";
-import { Permissions } from "../../typings/database";
+import { PermissionsString } from "../../Typings/client";
+import { Permissions } from "../../Typings/database";
 
 export default new Command({
     name: "perms",

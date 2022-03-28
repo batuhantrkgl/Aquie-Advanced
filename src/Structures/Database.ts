@@ -1,6 +1,6 @@
 import { GuildMember } from "discord.js";
 import mongoose from "mongoose";
-import { DatabaseOptions, DBGuild, Schemas, User, Permissions,Role } from "../typings/database";
+import { DatabaseOptions, DBGuild, Schemas, User, Permissions,Role } from "../Typings/database";
 
 
 export class Database {

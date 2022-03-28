@@ -2,7 +2,7 @@ import { CommandInteractionOptionResolver } from "discord.js";
 import { client } from "../..";
 import { AutoComplete } from "../../Functions/autoComplete";
 import { Event } from "../../Structures/Event";
-import { CommandType, ExtendedInteraction } from "../../typings/client";
+import { CommandType, ExtendedInteraction } from "../../Typings/client";
 
 export default new Event("interactionCreate",async(interaction:ExtendedInteraction) => {
     if(interaction.isAutocomplete()) { AutoComplete(interaction); };

@@ -16,6 +16,7 @@ export type RunFunctionOptions = {
 }
 
 export type RunFunction = (options:RunFunctionOptions) => any;
+
 export type AutoCompleteFunction = (interaction:ExtendedInteraction) => any;
 
 export enum Permissions {

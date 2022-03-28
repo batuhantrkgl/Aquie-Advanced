@@ -1,4 +1,4 @@
-import { CommandType } from "../typings/client";
+import { CommandType } from "../Typings/client";
 
 export class Command {
     constructor(commandOptions:CommandType){

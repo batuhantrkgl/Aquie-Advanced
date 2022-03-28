@@ -1,10 +1,10 @@
 import { ApplicationCommand, Client, ClientEvents, Collection, Guild, GuildMember, PermissionResolvable } from "discord.js";
-import { AquieClientOptions, CommandType } from '../typings/client';
+import { AquieClientOptions, CommandType } from '../Typings/client';
 import { Event } from "./Event";
 import { Database } from './Database';
 import fs from 'fs';
 import "dotenv/config";
-import { DBGuild,Role } from "../typings/database";
+import { DBGuild,Role } from "../Typings/database";
 import { client } from "..";
 
 export class AquieClient extends Client {
