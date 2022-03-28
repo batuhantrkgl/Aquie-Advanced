@@ -1,3 +1,4 @@
+import { PermissionResolvable } from "discord.js";
 import mongoose from "mongoose";
 
 export type DatabaseOptions = {
@@ -5,6 +6,14 @@ export type DatabaseOptions = {
 };
 
 export type GuildPermissions = { roles: Role[], users: User[] };
+
+export type DefaultPermissions = {
+    "AddToQueue": PermissionResolvable,
+    "ViewQueue": PermissionResolvable,
+    "ManagePlayer": PermissionResolvable,
+    "ManageQueue": PermissionResolvable,
+    "ManageServer": PermissionResolvable
+};
 
 export type Permissions = {
     "AddToQueue":boolean,

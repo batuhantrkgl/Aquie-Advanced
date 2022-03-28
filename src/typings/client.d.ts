@@ -1,4 +1,4 @@
-import { ChatInputApplicationCommandData, ClientOptions, CommandInteraction, CommandInteractionOptionResolver, GuildMember } from "discord.js"
+import { ChatInputApplicationCommandData, ClientOptions, CommandInteraction, CommandInteractionOptionResolver, GuildMember, Interaction } from "discord.js"
 import { AquieClient } from "../Structures/Client"
 
 export type AquieClientOptions = {
@@ -16,6 +16,7 @@ export type RunFunctionOptions = {
 }
 
 export type RunFunction = (options:RunFunctionOptions) => any;
+export type AutoCompleteFunction = (interaction:ExtendedInteraction) => any;
 
 export enum Permissions {
     Default = 0,
@@ -30,5 +31,6 @@ export type PermissionsString = "Default" | "AddToQueue" | "ViewQueue" | "Manage
 
 export type CommandType = {
     permissions:Permissions | PermissionsString,
-    run:RunFunction
+    run:RunFunction,
+    Autocomplete?:AutoCompleteFunction
 } & ChatInputApplicationCommandData
