@@ -1,6 +1,6 @@
 import { client } from "../..";
 import { Event } from "../../Structures/Event";
-import { DBGuild } from "../../typings/database";
+import { DBGuild } from "../../Typings/database";
 
 export default new Event("ready",async() => {
     client.log("Ready");
@@ -8,7 +8,7 @@ export default new Event("ready",async() => {
     //Register Commands
     const servers: string[] = [];
     client.guilds.cache.forEach(async guild => {
-        client.registerCommands(guild);
+        client.registerCommands(guild).catch((e) => console.log(e));
         client.log(`Commands Registered in ${guild.name}`)
         //Database
         servers.push(guild.id);

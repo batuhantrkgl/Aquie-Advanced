@@ -7,4 +7,6 @@ export const client = new AquieClient({
     presence: {activities: [{name: "137", type: "LISTENING"}], status: "dnd"}
 });
 
+
+
 client.Run();

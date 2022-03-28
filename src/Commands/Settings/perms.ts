@@ -123,8 +123,8 @@ export default new Command({
                 color: "WHITE",
                 description: Object.keys(permissions).map((key, index) => {
                     const values = Object.values(permissions);
-                    if(values[index] == true) { return `**▫️ \`\` ${key} \`\`**`; }
-                }).join("\n")
+                    if(values[index] == true) { return `**▫️ \`\` ${key} \`\`**\n`; }
+                }).join(" ")
             }]});
             return;
         };
