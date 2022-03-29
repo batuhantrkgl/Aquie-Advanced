@@ -194,20 +194,19 @@ export default new Command({
             }
         }
 
-        const target = () => {
-            const target = interaction.options.getRole("role") as Role || interaction.options.getMember("user") as GuildMember;
-            if(!target) return interaction.followUp({embeds: [{
-                description: `**❔ Select A \`\`<Role or User>\`\`**`,
-                color: "WHITE"
-            }]});
-            return target;
-        }
+         
+        const target = interaction.options.getRole("role") as Role || interaction.options.getMember("user") as GuildMember;
+        if(!target) return interaction.followUp({embeds: [{
+            description: `**❔ Select A \`\`<Role or User>\`\`**`,
+            color: "WHITE"
+        }]});
+
         switch(interaction.options.getSubcommand()) {
             case "view": 
-                await permsView(target() as Role | GuildMember);
+                await permsView(target as Role | GuildMember);
                 break;
             case "modify":
-                permsModify(target() as Role | GuildMember, interaction.options.getString("settings") as "allow" | "deny" | "clear", interaction.options.getString("permission") as PermissionsString);
+                permsModify(target as Role | GuildMember, interaction.options.getString("settings") as "allow" | "deny" | "clear", interaction.options.getString("permission") as PermissionsString);
                 break;
             
         }

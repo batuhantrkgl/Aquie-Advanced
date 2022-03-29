@@ -21,7 +21,10 @@
   },
   "homepage": "https://github.com/aquieover0/Aquie#readme",
   "dependencies": {
+    "@discordjs/voice": "^0.8.0",
+    "libsodium-wrappers": "^0.7.10",
     "mongoose": "^6.2.8",
+    "play-dl": "^1.9.2",
     "ts-node": "^10.7.0",
     "typescript": "^4.6.3"
   }

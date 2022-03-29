@@ -31,7 +31,8 @@ export enum Permissions {
 export type PermissionsString = "Default" | "AddToQueue" | "ViewQueue" | "ManagePlayer" |  "ManageQueue" | "ManageServer"
 
 export type CommandType = {
-    permissions:Permissions | PermissionsString,
+    permissions:PermissionsString,
+    voiceChannel?: false | true,
     run:RunFunction,
     Autocomplete?:AutoCompleteFunction
 } & ChatInputApplicationCommandData

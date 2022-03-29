@@ -1,5 +1,5 @@
 import { ApplicationCommand, Client, ClientEvents, Collection, Guild, GuildMember, PermissionResolvable } from "discord.js";
-import { AquieClientOptions, CommandType } from '../Typings/client';
+import { AquieClientOptions, CommandType, PermissionsString } from '../Typings/client';
 import { Event } from "./Event";
 import { Database } from './Database';
 import fs from 'fs';
@@ -73,15 +73,15 @@ export class AquieClient extends Client {
         return (await guild.commands.set(commandArray)) || null;
     }
 
-    public async checkPermission(author: GuildMember, command: CommandType) {
+    public async checkPermission(author: GuildMember, permission: PermissionsString) {
         if(author.id == author.guild.ownerId) return true;
-        if(command.permissions == "Default") return true;
+        if(permission == "Default") return true;
 
         const dbGuild:DBGuild = await this.db.getGuild(author.guild.id);
 
         const defaultPermCheck = ():boolean => {
             return author.permissions.has(
-                command.permissions.toString().replace(
+                permission.replace(
                     "AddToQueue","SEND_MESSAGES").replace(
                     "ViewQueue", "SEND_MESSAGES").replace(
                     "ManagePlayer", "KICK_MEMBERS").replace(
@@ -92,9 +92,9 @@ export class AquieClient extends Client {
         }
 
         const userPermCheck = ():boolean | undefined => {
-            const dbUser = dbGuild.permissions.users.find((value) => value);
+            const dbUser = dbGuild.permissions.users.find((value) => value.user_id == author.id);
             if(!dbUser) return undefined;
-            if(dbUser["permissions"][command.permissions]) return true;
+            if(dbUser["permissions"][permission]) return true;
             return false;
         }
 
@@ -110,19 +110,21 @@ export class AquieClient extends Client {
             setRoles.map((dbRole) => author.roles.cache.get(dbRole.role_id)).sort((a, b) => b.position - a.position).map((r) => r).map((role) => {
                 setRoles.map((dbRole) => {if(dbRole.role_id == role.id) { sortRole.push(dbRole); }})
             });
-           
+
             let i = 0;
             for(const role of sortRole) {
                 i++;
-                if(role.permissions[command.permissions]) return true;
+                if(role.permissions[permission]) return true;
                 if(sortRole.length != i) continue;
                 return false;
             }
         }
 
-        if(userPermCheck() != undefined) return userPermCheck();
-        else if(rolePermCheck() != undefined) return rolePermCheck();
+        if(userPermCheck() != undefined) {console.log("UserPerm!"); return userPermCheck()}
+        else if(rolePermCheck() != undefined) {console.log("RolePerm!"); return rolePermCheck()};
+        console.log("DefaultPermCheck");
         return defaultPermCheck();
+        
     }
 
     public async Run(): Promise<void> {
