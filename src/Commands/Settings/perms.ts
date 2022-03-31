@@ -193,7 +193,6 @@ export default new Command({
                 return;
             }
         }
-
          
         const target = interaction.options.getRole("role") as Role || interaction.options.getMember("user") as GuildMember;
         if(!target) return interaction.followUp({embeds: [{

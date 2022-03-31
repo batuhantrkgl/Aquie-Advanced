@@ -9,8 +9,8 @@ export default new Command({
     voiceChannel: true,
     run: ({ interaction }) => {
         const queue = player.getQueue(interaction.guild);
-        if(!queue) return interaction.followUp({embeds: [Embed("There is no queue.", 3)]});
-        interaction.followUp({embeds: [Embed("Song Skipped", 1)]});
+        if (!queue) return interaction.followUp({ embeds: [Embed("There is no queue.", 3)] });
+        interaction.followUp({ embeds: [Embed("Song Skipped", 1)] });
         queue.Skip();
     }
 })
