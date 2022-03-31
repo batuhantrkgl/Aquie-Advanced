@@ -90,6 +90,11 @@ export class Queue {
         this.Play();
     }
 
+    public Back(): void {
+        this.current -= 2;
+        this.Stop();
+    }
+
     public async Play(): Promise<void> {
 
         this.playing = true;
