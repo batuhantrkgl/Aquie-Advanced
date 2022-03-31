@@ -36,7 +36,7 @@ export default new Event("interactionCreate",async(interaction:ExtendedInteracti
             if(!(await client.checkPermission(interaction.member, "ManagePlayer"))) {
                 interaction.followUp({embeds: [Embed(`To Use This Command, you must be on the same voice channel as the Bot.`, 3)]})
                 return;
-            };            
+            };
         }
     }
 

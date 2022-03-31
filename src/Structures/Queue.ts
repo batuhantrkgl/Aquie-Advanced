@@ -2,11 +2,12 @@ import play_dl, { YouTubeVideo } from "play-dl";
 import { VoiceBasedChannel } from 'discord.js';
 import { AudioPlayer, AudioPlayerStatus, createAudioResource, joinVoiceChannel,NoSubscriberBehavior,VoiceConnection } from '@discordjs/voice';
 import { AquieClient } from "./Client";
+import { Track } from "../Typings/player";
 
 
 export class Queue {
 
-    public readonly tracks:YouTubeVideo[];
+    public readonly tracks:Track[];
     private connection:VoiceConnection | null;
     public playing:false | true;
     public client: AquieClient;
@@ -41,16 +42,17 @@ export class Queue {
         return this.connection;
     };
 
-    addTrack(track: YouTubeVideo): YouTubeVideo {
+    addTrack(track: Track): Track {
         this.tracks.push(track);
         return track;
     }
 
-    nowPlaying():YouTubeVideo | null {
+    nowPlaying():Track | null {
         return this.tracks[this.current] || null;
     }
 
     async play(){
+        
         this.playing = true;
         const stream = await play_dl.stream(this.nowPlaying()?.url);
 
