@@ -152,6 +152,10 @@ export class Queue {
         this.Play();
     }
 
+    public Disconnect(): void {
+        this.connection.disconnect();
+    }
+
 
     public async Play(): Promise<void> {
 
@@ -170,5 +174,6 @@ export class Queue {
         this.player.play(resource);
         this.connection.subscribe(this.player);
     }
+
 
 }
