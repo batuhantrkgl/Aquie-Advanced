@@ -106,7 +106,6 @@ export class Player {
                 let spTracks: SpotifyTrack[] | Track[] = await spPlaylist.all_tracks();
 
                 spTracks = spTracks.map((track) => {
-                    console.log(spTracks);
                     return {
                         title: track.name,
                         url: null,
@@ -128,6 +127,7 @@ export class Player {
                 const spAlbum = await play.spotify(query) as SpotifyAlbum;
                 
                 const albumTracks: Track[] = (await spAlbum.all_tracks()).map((track) => {
+
                     return {
                         title: track.name,
                         url: null,

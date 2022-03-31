@@ -41,7 +41,7 @@ export default new Command({
                 break;
             case "playlist":
                 const { channel } = interaction;
-                result.tracks.forEach(track => queue.addTrack(track));
+                result.tracks.forEach((track) => queue.addTrack(track));
                 interaction.followUp({ embeds: [Embed(`\`\` ${result.playlist_name} \`\` playlist added to queue`, 1)] });
                 if (queue.playing) return;
                 queue.Play();

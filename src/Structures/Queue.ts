@@ -60,7 +60,7 @@ export class Queue {
 
     public addTrack(track: Track): Track {
         this.tracks.push(track);
-        this.spotifyToYoutube(this.nowPlaying());
+        if(track.type == "SPOTIFY") this.spotifyToYoutube(track);
         return track;
     }
 
