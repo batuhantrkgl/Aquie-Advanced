@@ -113,9 +113,22 @@ export class Queue {
         this.Stop();
     }
 
-    setRepeatMode(mode: QueueRepeatMode) {
+    public setRepeatMode(mode: QueueRepeatMode): void {
         if(mode == this.repeatMode) return;
         this.repeatMode = mode;
+    }
+
+    Jump(position:number) :void {
+        //if(this.paused) { this.Resume(); }
+        if(this.playing){
+            this.current = position - 2;
+            this.player.stop();
+            return;
+        }
+
+        this.current = position - 1;
+        this.nowPlayingMessage();
+        this.Play();
     }
 
 
