@@ -3,10 +3,9 @@ import { Message, TextBasedChannel, VoiceBasedChannel } from 'discord.js';
 import { AudioPlayer, AudioPlayerStatus, createAudioResource, joinVoiceChannel, NoSubscriberBehavior, VoiceConnection } from '@discordjs/voice';
 import { AquieClient } from "./Client";
 import { Track } from "../Typings/player";
-import { QueueOptions } from "../Typings/queue";
 import { NowPlayingEmbed } from "../Functions/Embed";
-
-
+import { QueueOptions, QueueRepeatMode } from "../Typings/queue";
+import { isThisTypeNode } from "typescript";
 
 export class Queue {
 
@@ -18,7 +17,8 @@ export class Queue {
     public current: number;
     private textChannel: TextBasedChannel | null;
     public npMessage: Message<boolean>;
-
+    public repeatMode:QueueRepeatMode;
+    
     constructor(client: AquieClient, options: QueueOptions) {
         this.tracks = [];
         this.connection = null;
@@ -32,9 +32,27 @@ export class Queue {
         this.current = 0;
         this.textChannel = options.textChannel;
         this.npMessage = null;
+        this.setRepeatMode(QueueRepeatMode.Default);
+
         this.player.on(AudioPlayerStatus.Idle, () => {
             this.playing = false;
-            this.Skip();
+
+            switch(this.repeatMode){
+                case QueueRepeatMode.Default:
+                    this.Skip();
+                    break;
+                case QueueRepeatMode.Track:
+                    this.Play();
+                    this.nowPlayingMessage();
+                    break;
+                case QueueRepeatMode.Queue:
+                    if(this.current + 1 != this.tracks.length) { { this.Skip();  break; } }
+                    this.current = 0;
+                    this.nowPlayingMessage();
+                    this.Play();
+                    break;
+            }
+            
         })
 
     }
@@ -94,6 +112,12 @@ export class Queue {
         this.current -= 2;
         this.Stop();
     }
+
+    setRepeatMode(mode: QueueRepeatMode) {
+        if(mode == this.repeatMode) return;
+        this.repeatMode = mode;
+    }
+
 
     public async Play(): Promise<void> {
 
