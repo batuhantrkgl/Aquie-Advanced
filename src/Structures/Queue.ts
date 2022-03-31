@@ -18,6 +18,7 @@ export class Queue {
     private textChannel: TextBasedChannel | null;
     public npMessage: Message<boolean>;
     public repeatMode:QueueRepeatMode;
+    public paused:boolean;
     
     constructor(client: AquieClient, options: QueueOptions) {
         this.tracks = [];
@@ -29,6 +30,7 @@ export class Queue {
                 noSubscriber: NoSubscriberBehavior.Play
             }
         });
+        this.paused = false;
         this.current = 0;
         this.textChannel = options.textChannel;
         this.npMessage = null;
@@ -94,10 +96,12 @@ export class Queue {
     }
 
     public Stop(): void {
+        if(this.paused) { this.Resume(); }
         this.player.stop();
     }
 
     public Skip(): void {
+        if(this.paused) { this.Resume(); }
         if (this.playing) {
             this.player.stop();
             return;
@@ -109,6 +113,7 @@ export class Queue {
     }
 
     public Back(): void {
+        if(this.paused) { this.Resume(); }
         this.current -= 2;
         this.Stop();
     }
@@ -118,8 +123,24 @@ export class Queue {
         this.repeatMode = mode;
     }
 
+    /**
+     * Pauses the Song.
+     * @returns
+     */
+    Pause(): void {
+        if(this.playing) this.player.pause();
+        this.paused = true;
+    }
+    /**
+     * Plays the paused song.
+     */
+    Resume(): void {
+        this.player.unpause();      
+        this.paused = false;  
+    }
+
     Jump(position:number) :void {
-        //if(this.paused) { this.Resume(); }
+        if(this.paused) { this.Resume(); }
         if(this.playing){
             this.current = position - 2;
             this.player.stop();

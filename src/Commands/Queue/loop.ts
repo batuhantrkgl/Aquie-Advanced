@@ -35,6 +35,10 @@ export default new Command({
         const queue = player.getQueue(interaction.guild);
         if (!queue) return interaction.followUp({ embeds: [Embed("There is no queue.", 3)] });
 
+        if(interaction.member.voice.channel.id != interaction.guild.me.voice.channel.id){
+            queue.connect(interaction.member.voice.channel);
+        }
+        
         const mode = interaction.options.getNumber("type");
         queue.setRepeatMode(mode);
         let text:string;
