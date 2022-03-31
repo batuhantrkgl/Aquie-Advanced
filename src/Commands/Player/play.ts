@@ -1,3 +1,4 @@
+import { Message } from "discord.js";
 import { player } from "../..";
 import { Embed, Embeds, NowPlayingEmbed } from "../../Functions/Embed";
 import { Command } from "../../Structures/Command";
@@ -23,7 +24,10 @@ export default new Command({
             filter: ["search","yt_video","yt_playlist"]
         });
 
-        const queue = player.createQueue(interaction.guild);
+        const queue = player.createQueue(interaction.guild, {
+            textChannel: interaction.channel
+        });
+
         queue.connect(interaction.member.voice.channel);
 
         switch(result.type) {
@@ -33,16 +37,16 @@ export default new Command({
             case "track":
                 queue.addTrack(result.tracks[0]);
                 if(queue.playing) { interaction.followUp({embeds: [Embed(`Queued \`\` ${result.tracks[0].title} \`\``, 1)]}); return; }
-                interaction.followUp({embeds: [NowPlayingEmbed(result.tracks[0].title)]});
-                await queue.play();
+                queue.Play();
+                queue.npMessage = await interaction.followUp({embeds: [NowPlayingEmbed(result.tracks[0].title)]}) as Message;
                 break;
             case "playlist":
                 const { channel } = interaction;
                 result.tracks.forEach(track => queue.addTrack(track));
                 interaction.followUp({embeds: [Embed(`\`\` ${result.playlist_name} \`\` playlist added to queue`, 1)]});
                 if(queue.playing) return;
-                channel.send({embeds: [NowPlayingEmbed(`${result.tracks[0].title}`)]});
-                await queue.play();
+                queue.Play();
+                queue.npMessage = await channel.send({embeds: [NowPlayingEmbed(`${result.tracks[0].title}`)]});
                 break;
         }
 

@@ -1,6 +1,7 @@
 import { Guild, GuildMember } from 'discord.js';
 import play, { YouTubePlayList, YouTubeVideo } from 'play-dl';
 import { Playlist, SearchOptions, SearchResult, Track } from '../Typings/player';
+import { QueueOptions } from '../Typings/queue';
 import { AquieClient } from './Client';
 import { Queue } from './Queue';
 
@@ -89,8 +90,8 @@ export class Player {
         
     }
 
-    createQueue(guild: Guild) {
-        if(!guild.queue) { guild.queue = new Queue(this.client); }
+    createQueue(guild: Guild, options:QueueOptions) {
+        if(!guild.queue) { guild.queue = new Queue(this.client, { textChannel: options.textChannel}) };
         return guild.queue;
     }
 

@@ -1,8 +1,10 @@
-import play_dl, { YouTubeVideo } from "play-dl";
-import { VoiceBasedChannel } from 'discord.js';
+import play_dl from "play-dl";
+import { Message, TextBasedChannel, VoiceBasedChannel } from 'discord.js';
 import { AudioPlayer, AudioPlayerStatus, createAudioResource, joinVoiceChannel,NoSubscriberBehavior,VoiceConnection } from '@discordjs/voice';
 import { AquieClient } from "./Client";
 import { Track } from "../Typings/player";
+import { QueueOptions } from "../Typings/queue";
+import { NowPlayingEmbed } from "../Functions/Embed";
 
 
 export class Queue {
@@ -13,8 +15,10 @@ export class Queue {
     public client: AquieClient;
     public player:AudioPlayer;
     public current:number;
+    private textChannel: TextBasedChannel | null;
+    public npMessage:Message<boolean>;
 
-    constructor(client: AquieClient) {
+    constructor(client: AquieClient, options:QueueOptions) {
         this.tracks = [];
         this.connection = null;
         this.playing = false;
@@ -25,9 +29,11 @@ export class Queue {
             }
         });
         this.current = 0;
-
+        this.textChannel = options.textChannel;
+        this.npMessage = null;
         this.player.on(AudioPlayerStatus.Idle, () => {
             this.playing = false;
+            this.Skip();
         })
 
     }
@@ -42,6 +48,7 @@ export class Queue {
         return this.connection;
     };
 
+    
     addTrack(track: Track): Track {
         this.tracks.push(track);
         return track;
@@ -51,7 +58,29 @@ export class Queue {
         return this.tracks[this.current] || null;
     }
 
-    async play(){
+    async nowPlayingMessage():Promise<void> {
+        try {
+            if(this.npMessage) this.npMessage.delete();
+            this.npMessage = await this.textChannel.send({embeds: [NowPlayingEmbed(this.nowPlaying().title)]}) ;
+        } catch { return; }
+    }
+
+    Stop() {
+        this.player.stop();
+    }
+
+    Skip() {
+        if(this.playing) {
+            this.player.stop();
+            return;
+        }
+        this.current++;
+        if(this.nowPlaying() == null) return this.Stop();
+        this.nowPlayingMessage();
+        this.Play();
+    }
+
+    async Play(){
         
         this.playing = true;
         const stream = await play_dl.stream(this.nowPlaying()?.url);
