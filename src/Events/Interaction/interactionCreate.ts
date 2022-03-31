@@ -1,4 +1,4 @@
-import { CommandInteractionOptionResolver } from "discord.js";
+import { CommandInteractionOptionResolver, VoiceBasedChannel, VoiceRegion } from "discord.js";
 import { client } from "../..";
 import { AutoComplete } from "../../Functions/autoComplete";
 import { Embed } from "../../Functions/Embed";
@@ -20,10 +20,18 @@ export default new Event("interactionCreate",async(interaction:ExtendedInteracti
     }
 
     if(command.voiceChannel) {
-        if(!interaction.member.voice.channel) {
+        const voiceChannel:VoiceBasedChannel = interaction.member.voice.channel;
+
+        if(!voiceChannel) {
             interaction.followUp({embeds: [Embed("Connect to a Voice Channel", 2)]});
             return;
         }
+
+        if(!(await voiceChannel.permissionsFor(interaction.guild.me)).has("CONNECT")) {
+            interaction.followUp({embeds: [Embed(`I don't have permission to connect to the \`\` ${voiceChannel.name} \`\` voice channel.`, 3)]});
+            return;
+        }
+
         if(interaction.guild.me.voice.channel && interaction.guild.me.voice.channel.id !== interaction.member.voice.channel.id) {
             if(!(await client.checkPermission(interaction.member, "ManagePlayer"))) {
                 interaction.followUp({embeds: [Embed(`To Use This Command, you must be on the same voice channel as the Bot.`, 3)]})
