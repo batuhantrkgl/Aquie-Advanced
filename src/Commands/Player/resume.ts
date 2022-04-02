@@ -15,10 +15,8 @@ export default new Command({
         if(interaction.member.voice.channel.id != interaction.guild.me.voice.channel.id){
             queue.connect(interaction.member.voice.channel);
         }
-
-        queue.Resume();
-
         interaction.followUp({embeds: [Embed("The song is on `resumed`", 1)]})
+        queue.Resume();
 
     }
 })

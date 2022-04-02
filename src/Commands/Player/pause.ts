@@ -16,9 +16,9 @@ export default new Command({
             queue.connect(interaction.member.voice.channel);
         }
 
-        queue.Pause();
-
         interaction.followUp({embeds: [Embed("The song is on `paused`", 1)]});
+
+        queue.Pause();
 
     }
 })

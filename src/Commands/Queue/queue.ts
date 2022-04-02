@@ -11,7 +11,7 @@ class QueuePage {
         this.content = content;
     }
 
-    updateContent(newContent: string) {
+    public updateContent(newContent: string): void {
         this.content = newContent;
     }
 
@@ -30,22 +30,36 @@ export default new Command({
         const pages: QueuePage[] = [];
 
         let content: string = "";
-        let pageContentIndex = 0;
         let currentPage = 0;
 
-        queue.tracks.forEach((track, index) => {
-            pageContentIndex++;
-            content += `**[${index + 1}]** ▫️ \`\` ${track.title} \`\`\n`;
+        //Page Create!
+        const totalPage = queue.tracks.length / 10;
+        console.log(totalPage);
+        
+        for(let i=0;i < totalPage;i++){
+            console.log("Create Page!")
+            pages.push(new QueuePage(null));
+        }
 
-            if (pageContentIndex == 10) {
-                pages.push(new QueuePage(content));
-                content = "";
-                pageContentIndex = 0;
+        console.log(`${pages.length} Sayfa Oluşturuldu..`);
+
+        if(pages.length == 0) {
+            pages.push(new QueuePage("**This is Empty**"));
+        }
+
+        pages.forEach((page, index) => {
+            console.log(`${index}.Page Hazırlanıyor.`)
+            let trackPosition = 1;
+            for(const track of queue.tracks) {
+                content += `**[${trackPosition}]** ▫️ \`\` ${track.title} \`\`\n`;
+                page.updateContent(content);
+                trackPosition++;
+                if(trackPosition == 10) { break; }
             }
         })
 
-        if (queue.tracks.length < 10) pages.push(new QueuePage(content));
-
+        console.log(pages);
+        
         const row = new MessageActionRow()
             .addComponents(
                 new MessageButton()
@@ -56,7 +70,6 @@ export default new Command({
                     .setCustomId("next")
                     .setLabel("NEXT")
                     .setStyle("SECONDARY")
-
             );
 
 
@@ -68,22 +81,24 @@ export default new Command({
         collector.on("collect", async i => {
             if (i.customId == "next") currentPage++;
             else { currentPage--; }
+
             if (pages[currentPage] == null) {
-                i.update({
+                await i.update({
                     embeds: [{
                         color: "WHITE",
                         description: "**This is Empty**"
                     }]
-                });
+                }).catch(() => {});
                 return;
             }
 
-            i.update({
+            await i.update({
                 embeds: [{
                     color: "WHITE",
                     description: pages[currentPage].content
                 }]
-            })
+            }).catch(() => {})
+
         })
 
         collector.on("end", (collected) => {
@@ -91,6 +106,8 @@ export default new Command({
             row.components[1].setDisabled(true);
             interaction.editReply({ components: [row] });
         })
+
+        
 
         interaction.followUp({
             embeds: [{

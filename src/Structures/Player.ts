@@ -1,5 +1,5 @@
 import { Guild, GuildMember } from 'discord.js';
-import play, { SpotifyAlbum, SpotifyPlaylist, SpotifyTrack, YouTubePlayList, YouTubeVideo } from 'play-dl';
+import play, { SoundCloudTrack, SpotifyAlbum, SpotifyPlaylist, SpotifyTrack, YouTubePlayList, YouTubeVideo } from 'play-dl';
 import { SearchOptions, SearchResult, Track } from '../Typings/player';
 import { QueueOptions } from '../Typings/queue';
 import { AquieClient } from './Client';
@@ -145,6 +145,20 @@ export class Player {
                     requestBy: requestBy
                 } as SearchResult;
 
+            case "so_track": 
+                const soundCloudTrack = await play.soundcloud(query) as SoundCloudTrack;
+                const track:Track =  {
+                    title: soundCloudTrack.name,
+                    url: soundCloudTrack.url,
+                    type: "YOUTUBE",
+                    requestBy: requestBy,
+                };
+
+                return {
+                    type: "track",
+                    tracks: [track],
+                    requestBy: requestBy
+                } as SearchResult;
         }
     }
 

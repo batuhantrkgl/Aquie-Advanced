@@ -20,7 +20,7 @@ export default new Command({
         const query = interaction.options.getString("query");
         const result = await player.search(query, {
             requestBy: interaction.member,
-            filter: ["search", "yt_video", "yt_playlist", "sp_track","sp_playlist", "sp_album"]
+            filter: ["search", "yt_video", "yt_playlist", "sp_track","sp_playlist", "sp_album","so_track"]
         });
 
         const queue = player.createQueue(interaction.guild, {
@@ -41,8 +41,8 @@ export default new Command({
                 break;
             case "playlist":
                 const { channel } = interaction;
-                result.tracks.forEach((track) => queue.addTrack(track));
                 interaction.followUp({ embeds: [Embed(`\`\` ${result.playlist_name} \`\` playlist added to queue`, 1)] });
+                result.tracks.forEach((track) => queue.addTrack(track));
                 if (queue.playing) return;
                 queue.Play();
                 queue.npMessage = await channel.send({ embeds: [NowPlayingEmbed(`${result.tracks[0].title}`)] });
@@ -50,4 +50,5 @@ export default new Command({
         }
 
     }
+    
 })

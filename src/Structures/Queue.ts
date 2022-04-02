@@ -1,11 +1,10 @@
 import play_dl from "play-dl";
 import { Message, TextBasedChannel, VoiceBasedChannel } from 'discord.js';
-import { AudioPlayer, AudioPlayerStatus, createAudioResource, joinVoiceChannel, NoSubscriberBehavior, VoiceConnection } from '@discordjs/voice';
+import { AudioPlayer, AudioPlayerStatus, createAudioPlayer, createAudioResource, joinVoiceChannel, NoSubscriberBehavior, VoiceConnection } from '@discordjs/voice';
 import { AquieClient } from "./Client";
 import { Track } from "../Typings/player";
 import { NowPlayingEmbed } from "../Functions/Embed";
 import { QueueOptions, QueueRepeatMode } from "../Typings/queue";
-import { isThisTypeNode } from "typescript";
 
 export class Queue {
 
@@ -25,16 +24,18 @@ export class Queue {
         this.connection = null;
         this.playing = false;
         this.client = client;
-        this.player = new AudioPlayer({
+        this.player = createAudioPlayer({
             behaviors: {
                 noSubscriber: NoSubscriberBehavior.Play
             }
         });
+    
+
         this.paused = false;
         this.current = 0;
         this.textChannel = options.textChannel;
         this.npMessage = null;
-        this.setRepeatMode(QueueRepeatMode.Default);
+        this.repeatMode = QueueRepeatMode.Default;
 
         this.player.on(AudioPlayerStatus.Idle, () => {
             this.playing = false;
@@ -66,6 +67,7 @@ export class Queue {
             adapterCreator: channel.guild.voiceAdapterCreator
         });
 
+        this.connection.subscribe(this.player);
         return this.connection;
     };
 
@@ -84,14 +86,14 @@ export class Queue {
         return track;
     }
 
-    public nowPlaying(): Track | null {
+    public get nowPlaying():Track | null {
         return this.tracks[this.current] || null;
     }
 
     private async nowPlayingMessage(): Promise<void> {
         try {
             if (this.npMessage) this.npMessage.delete();
-            this.npMessage = await this.textChannel.send({ embeds: [NowPlayingEmbed(this.nowPlaying().title)] });
+            this.npMessage = await this.textChannel.send({ embeds: [NowPlayingEmbed(this.nowPlaying.title)] });
         } catch { return; }
     }
 
@@ -107,7 +109,7 @@ export class Queue {
             return;
         }
         this.current++;
-        if (this.nowPlaying() == null) return this.Stop();
+        if (this.nowPlaying == null) return this.Stop();
         this.nowPlayingMessage();
         this.Play();
     }
@@ -152,28 +154,31 @@ export class Queue {
         this.Play();
     }
 
-    public Disconnect(): void {
-        this.connection.disconnect();
-    }
+    public Disconnect(): void { this.connection.disconnect(); }
 
+    public getTrack(trackIndex: number):Track { return this.tracks[trackIndex]; };
 
+    public Remove(trackIndex: number): void { this.tracks.splice(trackIndex, 1); };
+
+    public RemoveRange(startIndex: number, endIndex: number) { this.tracks.splice(startIndex, endIndex); };
+    
     public async Play(): Promise<void> {
 
         this.playing = true;
+        const track = this.nowPlaying;
+        if(!track) return;
 
-        if (this.nowPlaying().type == "SPOTIFY" && this.nowPlaying().url == null) {
-            if (await this.spotifyToYoutube(this.nowPlaying()) == false) { this.Skip(); return; }
+        if (track.type == "SPOTIFY" && track.url == null) {
+            if (await this.spotifyToYoutube(track) == false) { this.Skip(); return; }
         }
 
-        const stream = await play_dl.stream(this.nowPlaying()?.url);
+        const stream = await play_dl.stream(track.url);
 
         const resource = createAudioResource(stream.stream, {
             inputType: stream.type
         });
 
         this.player.play(resource);
-        this.connection.subscribe(this.player);
     }
-
 
 }
