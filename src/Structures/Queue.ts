@@ -74,7 +74,7 @@ export class Queue {
 
     private async spotifyToYoutube(track: Track): Promise<boolean> {
         const youtubeResult = await play_dl.search(`${track.artists[0].name} ${track.title}`, { limit: 1, source: { youtube: "video" } });
-        if (youtubeResult.length == 0) return false; //  // channel.send("SPOTFY TRACK ERROR!");
+        if (youtubeResult.length == 0) return false;
         track.url = youtubeResult[0].url;
         return true;
     }
@@ -172,7 +172,11 @@ export class Queue {
             if (await this.spotifyToYoutube(track) == false) { this.Skip(); return; }
         }
 
-        const stream = await play_dl.stream(track.url);
+        const stream = await play_dl.stream(track.url, {
+            discordPlayerCompatibility: true,
+            htmldata: false,
+            quality: 2
+        });
 
         const resource = createAudioResource(stream.stream, {
             inputType: stream.type
