@@ -1,4 +1,4 @@
-import play_dl from "play-dl";
+import play_dl, { SoundCloudStream, YouTubeStream } from "play-dl";
 import { Message, TextBasedChannel, VoiceBasedChannel } from 'discord.js';
 import { AudioPlayer, AudioPlayerStatus, createAudioPlayer, createAudioResource, joinVoiceChannel, NoSubscriberBehavior, VoiceConnection } from '@discordjs/voice';
 import { AquieClient } from "./Client";
@@ -158,9 +158,40 @@ export class Queue {
 
     public getTrack(trackIndex: number):Track { return this.tracks[trackIndex]; };
 
-    public Remove(trackIndex: number): void { this.tracks.splice(trackIndex, 1); };
+    public Remove(trackIndex: number): void { 
+        this.tracks.splice(trackIndex, 1); 
+        if(this.current > this.tracks.length) {
+            this.current = this.tracks.length - 1;
+        }
+    };
 
-    public RemoveRange(startIndex: number, endIndex: number) { this.tracks.splice(startIndex, endIndex); };
+    public RemoveRange(startIndex: number, endIndex: number) { 
+        this.tracks.splice(startIndex, endIndex);
+        if(this.current > this.tracks.length) {
+            this.current = this.tracks.length - 1;
+        }
+    };
+
+    public Clear(): void {
+        this.tracks.splice(0, this.tracks.length);
+        this.current = 0;
+    }
+
+    public async Seek(second: number) {
+        if(!this.nowPlaying) throw new Error("[QueueError/Seek] : The currently playing song cannot be found.");
+
+        const stream = await play_dl.stream(this.nowPlaying.url, {
+            discordPlayerCompatibility: false,
+            htmldata: false,
+            quality: 2
+        , seek: second});
+
+        const resource = createAudioResource(stream.stream, {
+            inputType: stream.type
+        });
+
+        this.player.play(resource);
+    }
     
     public async Play(): Promise<void> {
 
@@ -173,11 +204,12 @@ export class Queue {
         }
 
         const stream = await play_dl.stream(track.url, {
-            discordPlayerCompatibility: true,
+            discordPlayerCompatibility: false,
             htmldata: false,
             quality: 2
         });
 
+        
         const resource = createAudioResource(stream.stream, {
             inputType: stream.type
         });

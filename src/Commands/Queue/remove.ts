@@ -57,8 +57,9 @@ export default new Command({
                     interaction.followUp({embeds: [Embed("There is no song in the Position you specified.", 3)]})
                     return;
                 }
-                interaction.followUp({embeds: [Embed(`Removed \`\` ${track.title} \`\``, 1)]})
                 queue.Remove(trackIndex);
+                interaction.followUp({embeds: [Embed(`Removed \`\` ${track.title} \`\``, 1)]})
+                return;
             case "range":
                 const [startIndex, endIndex] = [interaction.options.getNumber("start") - 1, interaction.options.getNumber("end")];
                 const startTrack = queue.getTrack(startIndex);
@@ -68,6 +69,7 @@ export default new Command({
                 }
                 interaction.followUp({embeds: [Embed(`Removed \`\` ${(endIndex - startIndex).toString()} Track \`\``, 1)]});
                 queue.RemoveRange(startIndex, endIndex);
+                return;
 
         }
 

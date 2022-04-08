@@ -10,9 +10,9 @@ export default new Command({
     description: "Displays the current song queue",
     permissions: "ViewQueue",
     voiceChannel: true,
-    run: ({ interaction }) => {
+    run: async ({ interaction }) => {
         const queue: Queue = player.getQueue(interaction.guild);
-        if (!queue) return interaction.followUp({ embeds: [Embed("There is no queue.", 3)] });
+        if (!queue) return await interaction.followUp({ embeds: [Embed("There is no queue.", 3)] });
 
         const pages:string[] = [];
 
@@ -21,7 +21,7 @@ export default new Command({
         queue.tracks.forEach((track, index) => {
             text += `\n**[${index + 1}]** ▫️ \`\` ${track.title} \`\``;
             pages[pageIndex] = text;
-            if((index + 1) / 10 == 1) {
+            if(!((index + 1) / 10).toString().includes(".")) {
                 pageIndex++;
                 text = "";
             }
@@ -48,10 +48,11 @@ export default new Command({
 
         const filter = i => i.user.id === interaction.user.id;
 
-        const collector = interaction.channel.createMessageComponentCollector({filter, time: 120000});
+        const collector = interaction.channel.createMessageComponentCollector({ filter, time: 120000 });
 
         let currentPage: number = 0;
-        collector.on("collect", async i => {
+
+        collector.on("collect", async(i) => {
             switch(i.customId) {
                 case "first":
                     currentPage = 0;
@@ -72,16 +73,19 @@ export default new Command({
                     color: "WHITE",
                     description: pages[currentPage] || "**This is Empty**"
                 }
-            ], components: [row]});
+            ], components: [row]}).catch((e) => { 
+                console.log(e);  
+             });
             return;
         })
 
-        interaction.followUp({embeds: [
+        await interaction.followUp({embeds: [
             {
                 color: "WHITE",
                 description: pages[currentPage] || "**This is Empty**"
             }
-        ], components: [row]});
+        ], components: [row]}).catch(() => {});
+        
         
         
 
