@@ -141,7 +141,7 @@ export class Queue {
     private async nowPlayingMessage(): Promise<void> {
         try {
             if (this.npMessage) this.npMessage.delete();
-            this.npMessage = await this.textChannel.send({ embeds: [NowPlayingEmbed(this.nowPlaying.title)] });
+            this.npMessage = await this.textChannel.send({ embeds: [NowPlayingEmbed(this.nowPlaying.title)] }).catch();
         } catch { return; }
     }
 
@@ -208,7 +208,7 @@ export class Queue {
         this.Play();
     }
 
-    public Disconnect(): void { this.connection.disconnect(); }
+    public Disconnect(): void { this.connection.disconnect(); this.Destroy(); }
 
     public getTrack(trackIndex: number): Track { return this.tracks[trackIndex]; };
 
@@ -247,7 +247,6 @@ export class Queue {
     }
 
     public async Play(): Promise<void> {
-        console.log("Play!");
         this.playing = true;
         const track = this.nowPlaying;
         if (!track)  {

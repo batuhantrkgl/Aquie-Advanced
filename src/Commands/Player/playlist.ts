@@ -47,6 +47,19 @@ export default new Command({
                     required: true
                 }
             ]
+        },
+        {
+            name: "share",
+            description: "Share Your Playlist.",
+            type: "SUB_COMMAND",
+            options: [
+                {
+                    name: "playlist_name",
+                    description: "Type the name of the playlist you want to share.",
+                    type: "STRING",
+                    required: true
+                }
+            ]
         }
     ],
     run: async ({ interaction }) => {
@@ -94,21 +107,21 @@ export default new Command({
                 let playlist: Playlist | null;
                 if (urlData.length == 4) {
                     const targetUser = await interaction.client.db.getUser(urlData[2]);
-                    if(!targetUser) {
-                        await interaction.followUp({embeds: [Embed("There is no such playlist", 3)]});
+                    if (!targetUser) {
+                        await interaction.followUp({ embeds: [Embed("There is no such playlist", 3)] });
                         return;
                     }
                     playlistName = urlData[3];
                     playlist = await interaction.client.db.getQueue(targetUser, playlistName);
-                    if(!targetUser || !playlist) {
+                    if (!targetUser || !playlist) {
                         await interaction.followUp({ embeds: [Embed(`A playlist named \` ${playlistName} \` could not be found.`, 3)] });
                         return;
                     };
 
 
                 } else {
-                    if(!user) {
-                        await interaction.followUp({embeds: [Embed("You do not have a playlist.", 3)]});
+                    if (!user) {
+                        await interaction.followUp({ embeds: [Embed("You do not have a playlist.", 3)] });
                         return;
                     }
                     playlistName = url;
@@ -123,8 +136,21 @@ export default new Command({
                 playlist.tracks.forEach((track) => queue.addTrack(track));
                 if (queue.playing) return;
                 queue.Play();
-                queue.npMessage = await channel.send({ embeds: [NowPlayingEmbed(`${playlist.tracks[0].title}`)] });
-
+                queue.npMessage = await channel.send({ embeds: [NowPlayingEmbed(`${playlist.tracks[0].title}`)] }).catch();
+                break;
+            case "share":
+                let sharePlaylist: Playlist;
+                if (!user) {
+                    interaction.followUp({ embeds: [Embed("You do not have a playlist with this name.", 3)] });
+                    return;
+                }
+                sharePlaylist = await interaction.client.db.getQueue(user, playlistName);
+                if (!sharePlaylist) {
+                    await interaction.followUp({ embeds: [Embed(`A playlist named \` ${playlistName} \` could not be found.`, 3)] });
+                    return;
+                };
+                await interaction.followUp({embeds: [Embed(sharePlaylist.url, 1)]});
+                break;
         }
     }
 })
