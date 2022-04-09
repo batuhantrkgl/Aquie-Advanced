@@ -46,6 +46,7 @@ export type DBGuild = {
 
 export type Playlist = {
     playlist_name: string,
+    url: string,
     tracks: Track[];
 }
 

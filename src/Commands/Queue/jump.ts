@@ -38,6 +38,7 @@ export default new Command({
 
 
         queue.Jump(index);
+        console.log("JUMP!");
 
         
     }

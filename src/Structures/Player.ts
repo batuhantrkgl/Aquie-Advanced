@@ -8,7 +8,7 @@ import tokenOptions from '../../tokenOptions.json';
 
 export class Player {
     public client: AquieClient;
-    private readonly queue:Collection<string, Queue>
+    public readonly queue:Collection<string, Queue>
     
     constructor(client: AquieClient) {
         this.client = client;

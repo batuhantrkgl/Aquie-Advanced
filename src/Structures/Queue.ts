@@ -247,10 +247,13 @@ export class Queue {
     }
 
     public async Play(): Promise<void> {
-
+        console.log("Play!");
         this.playing = true;
         const track = this.nowPlaying;
-        if (!track) return;
+        if (!track)  {
+            this.playing = false;
+            return;
+        }
 
         if (track.type == "SPOTIFY" && track.url == null) {
             if (await this.spotifyToYoutube(track) == false) { this.Skip(); return; }
@@ -259,7 +262,6 @@ export class Queue {
         const stream = await play_dl.stream(track.url, {
             discordPlayerCompatibility: false
         });
-
 
         const resource = createAudioResource(stream.stream, {
             inputType: stream.type
@@ -271,8 +273,7 @@ export class Queue {
     private Destroy(): void {
         this.connection.disconnect();
         this.player.stop();
-        delete this.guild.queue;
-        this.guild.queue = null;
+        this.client.player.queue.delete(this.guild.id);
     };
 
 

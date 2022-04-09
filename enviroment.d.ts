@@ -4,6 +4,7 @@ declare global {
             TOKEN:string;
             mongoURL:string;
             INVITE_LINK:string;
+            GUILD: string;
         }
     }
 }

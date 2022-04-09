@@ -12,6 +12,7 @@ export class AquieClient extends Client {
     public readonly commands: Collection<string, CommandType>
     public readonly db:Database;
     public readonly player: Player;
+    public readonly guildInvite: string;
     public inviteURL:string;
     constructor(options: AquieClientOptions) {
         super(options);
@@ -20,6 +21,7 @@ export class AquieClient extends Client {
         this.db = new Database({mongoURL: process.env.mongoURL});
         this.player = new Player(this);
         this.inviteURL = process.env.INVITE_LINK;
+        this.guildInvite = process.env.GUILD;
     }
 
     public log(message: string): void {

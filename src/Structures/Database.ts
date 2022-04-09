@@ -98,7 +98,6 @@ export class Database {
     public async permAddRole(role: import("discord.js").Role) {
         const guild: DBGuild = await this.getGuild(role.guild.id);
 
-
         const dbRole: Role = {
             role_id: role.id,
             permissions: this.defaultPermissions(role)
@@ -145,13 +144,22 @@ export class Database {
         await this.GuildModel.updateOne({ guild_id: user.guild.id }, { permissions: guild.permissions });
     }
 
-    public async addUser(user: import("discord.js").User): Promise<void> {
-        await new this.UserModel(
+    /**
+     * 
+     * @param user 
+     * @returns 
+     */
+    public async addUser(user: import("discord.js").User): Promise<DBUser> {
+        const dbUser: any = new this.UserModel(
             {
                 user_id: user.id,
                 playlists: []
             }
-        ).save();
+        );
+
+        await dbUser.save();
+        return await this.getUser(user.id);
+
     }
 
     public async removeUser(userID: string): Promise<void> {
@@ -163,16 +171,50 @@ export class Database {
         return user == undefined ? null : user;
     }
 
-    public async saveQueue(userID: string, playlist: Playlist): Promise<void> {
-        const dbUser: DBUser = await this.getUser(userID);
+    public async saveQueue(dbUser: DBUser, playlist: Playlist): Promise<Playlist> {
+        
+        const dbPlaylist = dbUser.playlists.map((value) => {
+            if(value.playlist_name.startsWith(playlist.playlist_name)) return value;
+        });
+        
+        if(dbPlaylist.length == 1) {
+            playlist.playlist_name = `${playlist.playlist_name}(0)`;
+        }
 
-        const dbPlaylist = dbUser.playlists.find((value) => value.playlist_name === playlist.playlist_name);
-        console.log(dbPlaylist);//TODO
+        else if(dbPlaylist.length > 1) {
+            const lastIndex = dbPlaylist.map((value) => {
+                if(value.playlist_name.startsWith(playlist.playlist_name)) {
+                    const index = value.playlist_name[value.playlist_name.length - 2];
+                
+                    if(Number(index)) { return parseInt(index); }
+                    else if(index == "0") { return parseInt(index); }
+                    return 0;
+                };                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      
+            }).sort((a, b) => b - a);
+
+            
+            playlist.playlist_name = `${playlist.playlist_name}(${(lastIndex[0] + 1).toString()})`;
+        }
+        
         dbUser.playlists.push(playlist);
-        await this.UserModel.updateOne({ user_id: userID }, { playlists: dbUser.playlists });
+        await this.UserModel.updateOne({ user_id: dbUser.user_id }, { playlists: dbUser.playlists });
+        return playlist;
+
+    }
+    
+    public async removeQueue(dbUser: DBUser, playlistName: string) {
+        const index = dbUser.playlists.findIndex((value) => value.playlist_name === playlistName);
+        dbUser.playlists.splice(index, 1);
+        await this.UserModel.updateOne({user_id: dbUser.user_id}, {playlists: dbUser.playlists});
+        if((await this.getUser(dbUser.user_id)).playlists.length == 0) {
+            await this.UserModel.deleteOne({user_id: dbUser.user_id});
+        }
     }
 
-
+    public async getQueue(user: DBUser, playlistName: string): Promise<Playlist | null> {
+        const queue = user.playlists.find((value) => value.playlist_name === playlistName);
+        return queue || null;
+    }
 
     async connect() {
         const connect: typeof mongoose = await mongoose.connect(this.dbURL);
