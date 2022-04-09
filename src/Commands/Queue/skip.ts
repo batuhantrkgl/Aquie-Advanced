@@ -23,7 +23,6 @@ export default new Command({
             setTimeout(() => {
                 queue.setRepeatMode(QueueRepeatMode.Track);
             }, 500)
-           
             return;
         }
 

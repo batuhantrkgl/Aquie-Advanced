@@ -12,12 +12,14 @@ export class AquieClient extends Client {
     public readonly commands: Collection<string, CommandType>
     public readonly db:Database;
     public readonly player: Player;
+    public inviteURL:string;
     constructor(options: AquieClientOptions) {
         super(options);
         this.token = options.token;
         this.commands = new Collection();
         this.db = new Database({mongoURL: process.env.mongoURL});
         this.player = new Player(this);
+        this.inviteURL = process.env.INVITE_LINK;
     }
 
     public log(message: string): void {

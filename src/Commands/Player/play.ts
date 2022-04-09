@@ -10,7 +10,7 @@ export default new Command({
     options: [
         {
             name: "query",
-            description: "<url or title>(Youtube | Spotify)",
+            description: "<url or title>(Youtube | Spotify | SoundCloud)",
             type: "STRING",
             required: true
         }
@@ -25,8 +25,6 @@ export default new Command({
         const queue = interaction.client.player.createQueue(interaction.guild, {
             textChannel: interaction.channel,
         });
-
-        console.log(queue);
 
         queue.connect(interaction.member.voice.channel);
 

@@ -8,8 +8,8 @@ export default new Command({
     permissions: "ManagePlayer",
     voiceChannel:true,
     run: ({ interaction }) =>{
-
         let queue:Queue = interaction.client.player.getQueue(interaction.guild);
+        
         if(queue == null) queue = interaction.client.player.createQueue(interaction.guild, {
             textChannel: interaction.channel
         });

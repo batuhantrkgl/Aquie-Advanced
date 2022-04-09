@@ -18,7 +18,6 @@ export class Player {
 
     async search(query: string, options: SearchOptions = { "filter": ["search"] }): Promise<SearchResult> {
         const validate = await play.validate(query);
-        console.log(validate);
         if (!options.filter.includes(validate)) return { type: null, tracks: null } as SearchResult;
 
         const requestBy: GuildMember | null = options.requestBy == null ? null : options.requestBy

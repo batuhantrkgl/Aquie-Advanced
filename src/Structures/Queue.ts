@@ -21,7 +21,7 @@ export class Queue {
     public repeatMode: QueueRepeatMode;
     public paused: boolean;
     private notPlayingTime: number;
-
+    
     constructor(guild: Guild, options: QueueOptions) {
         this.tracks = [];
         this.connection = null;
@@ -99,8 +99,6 @@ export class Queue {
             if (newState.channel == null) {
                 if (!botChannel) return;
                 if (oldState.channel.id != botChannel.id) return;
-                console.log("Member  voice channel left!");
-                console.log(botChannel.members.size);
                 if (botChannel.members.size != 1) return;
                 setTimeout(() => {
                     botChannel = this.guild.me.voice.channel;

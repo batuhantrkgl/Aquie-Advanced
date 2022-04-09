@@ -1,8 +1,9 @@
 import { PermissionResolvable } from "discord.js";
 import mongoose from "mongoose";
+import { Track } from "./player";
 
 export type DatabaseOptions = {
-    mongoURL:string
+    mongoURL: string
 };
 
 export type GuildPermissions = { roles: Role[], users: User[] };
@@ -16,7 +17,7 @@ export type DefaultPermissions = {
 };
 
 export type Permissions = {
-    "AddToQueue":boolean,
+    "AddToQueue": boolean,
     "ViewQueue": boolean,
     "ManagePlayer": boolean,
     "ManageQueue": boolean,
@@ -24,17 +25,17 @@ export type Permissions = {
 };
 
 export type Role = {
-    role_id:string, 
+    role_id: string,
     permissions: Permissions
 };
 
 export type User = {
-    user_id:string,
-    permissions:Permissions
+    user_id: string,
+    permissions: Permissions
 };
 
 export type GuildSchema = {
-    guild_id:string,
+    guild_id: string,
     permissions: GuildPermissions
 }
 
@@ -43,7 +44,18 @@ export type DBGuild = {
     __v: 0
 } & GuildSchema
 
-export type Schemas = {
-    GuildSchema:any,
+export type Playlist = {
+    playlist_name: string,
+    tracks: Track[];
 }
+
+export type DBUser = {
+    user_id: string,
+    playlists: Playlist[]
+};
+
+export type Schemas = {
+    GuildSchema: any,
+    UserSchema: any
+};
 

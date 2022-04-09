@@ -20,7 +20,6 @@ export default new Command({
         const queue = interaction.client.player.getQueue(interaction.guild);
         if (!queue) return interaction.followUp({ embeds: [Embed("There is no queue.", 3)] });
 
-
         const unitTypes = ["m", "s"];
 
         const position: string = interaction.options.getString("position");
@@ -48,7 +47,7 @@ export default new Command({
             }
         };
 
-        queue.Seek(second).catch(() => {});
+        queue.Seek(second).catch(() => { });
         await interaction.followUp({ embeds: [Embed("The position of the song has been adjusted", 1)] });
 
     }
