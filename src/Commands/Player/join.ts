@@ -1,8 +1,6 @@
-import { player } from "../..";
 import { Embed } from "../../Functions/Embed";
 import { Command } from "../../Structures/Command";
 import { Queue } from "../../Structures/Queue";
-
 
 export default new Command({
     name: "join",
@@ -11,8 +9,8 @@ export default new Command({
     voiceChannel:true,
     run: ({ interaction }) =>{
 
-        let queue:Queue = player.getQueue(interaction.guild);
-        if(queue == null) queue = player.createQueue(interaction.guild, {
+        let queue:Queue = interaction.client.player.getQueue(interaction.guild);
+        if(queue == null) queue = interaction.client.player.createQueue(interaction.guild, {
             textChannel: interaction.channel
         });
         interaction.followUp({embeds: [Embed(`Connected to Channel  \`\` ${interaction.member.voice.channel.name} \`\``, 1)]});

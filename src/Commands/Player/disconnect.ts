@@ -1,4 +1,3 @@
-import { player } from "../..";
 import { Embed } from "../../Functions/Embed";
 import { Command } from "../../Structures/Command";
 
@@ -8,7 +7,7 @@ export default new Command({
     permissions: "ManagePlayer",
     voiceChannel: true,
     run: ({ interaction }) => {
-        const queue = player.getQueue(interaction.guild);
+        const queue = interaction.client.player.getQueue(interaction.guild);
         if (!queue) return interaction.followUp({ embeds: [Embed("There is no queue.", 3)] });
         interaction.followUp({embeds: [Embed("Bye.", 1)]});
         queue.Disconnect();

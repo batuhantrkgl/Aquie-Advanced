@@ -1,4 +1,4 @@
-import { CommandInteractionOptionResolver, VoiceBasedChannel, VoiceRegion } from "discord.js";
+import { VoiceBasedChannel } from "discord.js";
 import { client } from "../..";
 import { AutoComplete } from "../../Functions/autoComplete";
 import { Embed } from "../../Functions/Embed";
@@ -42,10 +42,8 @@ export default new Event("interactionCreate",async(interaction:ExtendedInteracti
 
     try {
         command.run({
-            args: interaction.options as CommandInteractionOptionResolver,
-            client,
             interaction: interaction as ExtendedInteraction
-        })
+        });
     } catch(e) {
         console.log(e);
         return;

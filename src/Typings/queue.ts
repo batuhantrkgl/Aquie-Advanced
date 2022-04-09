@@ -1,7 +1,7 @@
-import { TextBasedChannel } from "discord.js";
+import { Guild, TextBasedChannel } from "discord.js";
 
 export type QueueOptions = {
-    textChannel:TextBasedChannel
+    textChannel:TextBasedChannel,
 };
 
 export enum QueueRepeatMode {

@@ -1,10 +1,9 @@
 import { Embed } from "../../Functions/Embed";
 import { Command } from "../../Structures/Command";
-import { QueueRepeatMode } from "../../Typings/queue";
 
 export default new Command({
-    name: "back",
-    description: "Skips to the previous song",
+    name: "stop",
+    description: "Stops the currently playing track and returns to the beginning of the queue",
     permissions: "ManagePlayer",
     voiceChannel: true,
     run: ({ interaction }) => {
@@ -15,18 +14,8 @@ export default new Command({
             queue.connect(interaction.member.voice.channel);
         }
         
-        interaction.followUp({ embeds: [Embed("Back Skipped", 1)] });
+        interaction.followUp({ embeds: [Embed("Stopped", 1)] });
 
-        if(queue.repeatMode == QueueRepeatMode.Track) {
-            queue.setRepeatMode(QueueRepeatMode.Default);
-            queue.Back();
-            setTimeout(() => {
-                queue.setRepeatMode(QueueRepeatMode.Track);
-            }, 500)
-
-            return;
-        }
-
-        queue.Back();
+        queue.Stop();
     }
 })

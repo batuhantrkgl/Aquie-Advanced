@@ -1,5 +1,4 @@
-import { MessageActionRow, MessageButton, MessageEmbed } from "discord.js";
-import { player } from "../..";
+import { MessageActionRow, MessageButton } from "discord.js";
 import { Embed } from "../../Functions/Embed";
 import { Command } from "../../Structures/Command";
 import { Queue } from "../../Structures/Queue";
@@ -11,7 +10,7 @@ export default new Command({
     permissions: "ViewQueue",
     voiceChannel: true,
     run: async ({ interaction }) => {
-        const queue: Queue = player.getQueue(interaction.guild);
+        const queue: Queue = interaction.client.player.getQueue(interaction.guild);
         if (!queue) return await interaction.followUp({ embeds: [Embed("There is no queue.", 3)] });
 
         const pages:string[] = [];
@@ -85,16 +84,6 @@ export default new Command({
                 description: pages[currentPage] || "**This is Empty**"
             }
         ], components: [row]}).catch(() => {});
-        
-        
-        
-
-
-
-        
-
-        
-        
-
+    
     }
 })

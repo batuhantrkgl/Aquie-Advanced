@@ -1,5 +1,3 @@
-import { MessageAttachment } from "discord.js";
-import { player } from "../..";
 import { Embed } from "../../Functions/Embed";
 import { Command } from "../../Structures/Command";
 
@@ -13,13 +11,13 @@ export default new Command({
     options: [
         {
             name: "position",
-            description: "Atlamak istediğiniz Pozisyonu belirtiniz <(1s, 1m)>",
+            description: "Specify the Position you want to Jump <(1s, 1m)>",
             type: "STRING",
             required: true
         }
     ],
     run: async ({ interaction }) => {
-        const queue = player.getQueue(interaction.guild);
+        const queue = interaction.client.player.getQueue(interaction.guild);
         if (!queue) return interaction.followUp({ embeds: [Embed("There is no queue.", 3)] });
 
 
@@ -50,15 +48,8 @@ export default new Command({
             }
         };
 
-        queue.Seek(second);
+        queue.Seek(second).catch(() => {});
         await interaction.followUp({ embeds: [Embed("The position of the song has been adjusted", 1)] });
-
-
-
-
-
-
-
 
     }
 })

@@ -5,24 +5,26 @@ import { Database } from './Database';
 import fs from 'fs';
 import "dotenv/config";
 import { DBGuild,Role } from "../Typings/database";
-import { client } from "..";
+import { Player } from "./Player";
 
 export class AquieClient extends Client {
 
     public readonly commands: Collection<string, CommandType>
     public readonly db:Database;
+    public readonly player: Player;
     constructor(options: AquieClientOptions) {
         super(options);
         this.token = options.token;
         this.commands = new Collection();
         this.db = new Database({mongoURL: process.env.mongoURL});
+        this.player = new Player(this);
     }
 
     public log(message: string): void {
-        console.log(`[Client] : ${message}`);
+        console.log(`\x1b[42m[Client]\x1b[0m : ${message}`);
     }
     public error(message:string): void {
-        console.log(`- [Client] : ${message}`);
+        console.log(`\x1b[41m[Client]\x1b[0m : ${message}`);
     }
     /**
      * It imports by default.
@@ -120,9 +122,8 @@ export class AquieClient extends Client {
             }
         }
 
-        if(userPermCheck() != undefined) {console.log("UserPerm!"); return userPermCheck()}
-        else if(rolePermCheck() != undefined) {console.log("RolePerm!"); return rolePermCheck()};
-        console.log("DefaultPermCheck");
+        if(userPermCheck() != undefined) { return userPermCheck() }
+        else if(rolePermCheck() != undefined) { return rolePermCheck()};
         return defaultPermCheck();
         
     }
@@ -131,5 +132,6 @@ export class AquieClient extends Client {
         await this.db.connect().then(() => this.log("Connected to Database")).catch((e) => { this.error("Not Connected To Database"); process.exit(0) });
         this.loadModules();
         await this.login(this.token);
-    }
+    };
+
 }

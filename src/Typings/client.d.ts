@@ -6,13 +6,12 @@ export type AquieClientOptions = {
 } & ClientOptions
 
 export type ExtendedInteraction = {
-    member:GuildMember
+    member:GuildMember,
+    client: AquieClient
 } & CommandInteraction
 
 export type RunFunctionOptions = {
     interaction:ExtendedInteraction,
-    client:AquieClient,
-    args:CommandInteractionOptionResolver
 }
 
 export type RunFunction = (options:RunFunctionOptions) => any;

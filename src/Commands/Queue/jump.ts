@@ -1,4 +1,3 @@
-import { player } from "../..";
 import { Embed } from "../../Functions/Embed";
 import { Command } from "../../Structures/Command";
 import { QueueRepeatMode } from "../../typings/queue";
@@ -18,7 +17,7 @@ export default new Command({
     ],
     run: ({ interaction }) => {
         const index = interaction.options.getNumber("position");
-        const queue = player.getQueue(interaction.guild);
+        const queue = interaction.client.player.getQueue(interaction.guild);
         if (!queue) return interaction.followUp({ embeds: [Embed("There is no queue.", 3)] });
 
         if(interaction.member.voice.channel.id != interaction.guild.me.voice.channel.id){

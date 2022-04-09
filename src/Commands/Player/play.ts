@@ -1,5 +1,4 @@
 import { Message } from "discord.js";
-import { player } from "../..";
 import { Embed, NowPlayingEmbed } from "../../Functions/Embed";
 import { Command } from "../../Structures/Command";
 
@@ -18,14 +17,16 @@ export default new Command({
     ],
     run: async ({ interaction }) => {
         const query = interaction.options.getString("query");
-        const result = await player.search(query, {
+        const result = await interaction.client.player.search(query, {
             requestBy: interaction.member,
             filter: ["search", "yt_video", "yt_playlist", "sp_track","sp_playlist", "sp_album","so_track"]
         });
 
-        const queue = player.createQueue(interaction.guild, {
-            textChannel: interaction.channel
+        const queue = interaction.client.player.createQueue(interaction.guild, {
+            textChannel: interaction.channel,
         });
+
+        console.log(queue);
 
         queue.connect(interaction.member.voice.channel);
 

@@ -1,4 +1,4 @@
-import { Guild, GuildMember } from 'discord.js';
+import { Collection, Guild, GuildMember } from 'discord.js';
 import play, { SoundCloudTrack, SpotifyAlbum, SpotifyPlaylist, SpotifyTrack, YouTubePlayList, YouTubeVideo } from 'play-dl';
 import { SearchOptions, SearchResult, Track } from '../Typings/player';
 import { QueueOptions } from '../Typings/queue';
@@ -8,14 +8,17 @@ import tokenOptions from '../../tokenOptions.json';
 
 export class Player {
     public client: AquieClient;
-
+    private readonly queue:Collection<string, Queue>
+    
     constructor(client: AquieClient) {
         this.client = client;
+        this.queue = new Collection();
         play.setToken(tokenOptions);
-
     }
+
     async search(query: string, options: SearchOptions = { "filter": ["search"] }): Promise<SearchResult> {
         const validate = await play.validate(query);
+        console.log(validate);
         if (!options.filter.includes(validate)) return { type: null, tracks: null } as SearchResult;
 
         const requestBy: GuildMember | null = options.requestBy == null ? null : options.requestBy
@@ -163,11 +166,16 @@ export class Player {
     }
 
     createQueue(guild: Guild, options: QueueOptions) {
-        if (!guild.queue) { guild.queue = new Queue(this.client, { textChannel: options.textChannel }) };
-        return guild.queue;
+        if(!this.queue.has(guild.id)) {
+            this.queue.set(guild.id, new Queue(guild, {
+                textChannel: options.textChannel
+            }));
+        }
+    
+        return this.getQueue(guild);
     }
 
     getQueue(guild: Guild): Queue | null {
-        return guild.queue;
+        return this.queue.get(guild.id);
     }
 }
