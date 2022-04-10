@@ -173,10 +173,11 @@ export class Database {
 
     public async saveQueue(dbUser: DBUser, playlist: Playlist): Promise<Playlist> {
         
-        const dbPlaylist = dbUser.playlists.map((value) => {
+        const dbPlaylist = dbUser.playlists?.map((value) => {
             if(value.playlist_name.startsWith(playlist.playlist_name)) return value;
         });
-        
+       
+     
         if(dbPlaylist.length == 1) {
             playlist.playlist_name = `${playlist.playlist_name}(0)`;
         }

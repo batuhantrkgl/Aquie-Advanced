@@ -42,7 +42,7 @@ export class Queue {
         this.notPlayingTime = 0;
 
 
-        this.player.on(AudioPlayerStatus.Idle, () => {
+        this.player?.on(AudioPlayerStatus.Idle, () => {
             this.playing = false;
 
             switch (this.repeatMode) {
@@ -68,7 +68,7 @@ export class Queue {
 
     queueDestroyListener() {
         const interval = setInterval(() => {
-            if (this.guild.queue == null) { clearInterval(interval); }
+            if (!this.client.player.queue.has(this.guild.id)) { clearInterval(interval); }
             if (this.playing == true) return this.notPlayingTime = 0;
             this.notPlayingTime++;
             if (this.notPlayingTime == 5) {
@@ -140,6 +140,7 @@ export class Queue {
 
     private async nowPlayingMessage(): Promise<void> {
         try {
+            if(!this.client.player.queue.has(this.guild.id)) return;
             if (this.npMessage) this.npMessage.delete();
             this.npMessage = await this.textChannel.send({ embeds: [NowPlayingEmbed(this.nowPlaying.title)] }).catch();
         } catch { return; }
@@ -147,13 +148,13 @@ export class Queue {
 
     public Stop(): void {
         if (this.paused) { this.Resume(); }
-        this.player.stop();
+        this.player?.stop();
     }
 
     public Skip(): void {
         if (this.paused) { this.Resume(); }
         if (this.playing) {
-            this.player.stop();
+            this.player?.stop();
             return;
         }
         this.current++;
@@ -184,14 +185,14 @@ export class Queue {
      * @returns
      */
     Pause(): void {
-        if (this.playing) this.player.pause();
+        if (this.playing) this.player?.pause();
         this.paused = true;
     }
     /**
      * Plays the paused song.
      */
     Resume(): void {
-        this.player.unpause();
+        this.player?.unpause();
         this.paused = false;
     }
 
@@ -199,7 +200,7 @@ export class Queue {
         if (this.paused) { this.Resume(); }
         if (this.playing) {
             this.current = position - 2;
-            this.player.stop();
+            this.player?.stop();
             return;
         }
 
@@ -243,7 +244,7 @@ export class Queue {
             inputType: stream.type
         });
 
-        this.player.play(resource);
+        this.player?.play(resource);
     }
 
     public async Play(): Promise<void> {
@@ -266,13 +267,15 @@ export class Queue {
             inputType: stream.type
         });
 
-        this.player.play(resource);
+        this.player?.play(resource);
     }
 
     private Destroy(): void {
+        this.player?.removeListener(AudioPlayerStatus.Idle, (oldState, newState) => {});
+        delete this.player;
         this.connection.disconnect();
-        this.player.stop();
-        this.client.player.queue.delete(this.guild.id);
+        this.player?.stop();
+        this.client.player.queue.delete(this.guild.id)
     };
 
 

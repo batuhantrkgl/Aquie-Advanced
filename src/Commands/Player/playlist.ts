@@ -89,7 +89,7 @@ export default new Command({
                     return;
                 }
                 await interaction.client.db.removeQueue(user, playlistName);
-                await interaction.followUp({ embeds: [Embed(`Your playlist named ${playlistName} has been deleted.`, 1)] });
+                await interaction.followUp({ embeds: [Embed(`Your playlist named \` ${playlistName} \` has been deleted.`, 1)] });
                 break;
             case "load":
                 if (!queue) {

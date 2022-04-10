@@ -72,9 +72,7 @@ export default new Command({
                     color: "WHITE",
                     description: pages[currentPage] || "**This is Empty**"
                 }
-            ], components: [row]}).catch((e) => { 
-                console.log(e);  
-             });
+            ], components: [row]}).catch((e) => {  return; });
             return;
         })
 
