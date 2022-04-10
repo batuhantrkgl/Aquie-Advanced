@@ -56,6 +56,6 @@ client.on("ready",async() => {
     setInterval(async() => {
         await client.setActivity(await Activity()).catch();
     }, 30 * 10000);
-})
+});
 
 client.login({ clientId: process.env.RPC_CLIENT_ID });
