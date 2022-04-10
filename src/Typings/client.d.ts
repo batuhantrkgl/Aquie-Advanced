@@ -1,4 +1,4 @@
-import { ChatInputApplicationCommandData, ClientOptions, CommandInteraction, CommandInteractionOptionResolver, GuildMember, Interaction } from "discord.js"
+import { ChatInputApplicationCommandData, ClientOptions, CommandInteraction, CommandInteractionOptionResolver, Guild, GuildMember, Interaction } from "discord.js"
 import { AquieClient } from "../Structures/Client"
 
 export type AquieClientOptions = {
@@ -35,3 +35,7 @@ export type CommandType = {
     run:RunFunction,
     Autocomplete?:AutoCompleteFunction
 } & ChatInputApplicationCommandData
+
+export type ExtendedGuild = {
+    client: AquieClient
+} & Guild;

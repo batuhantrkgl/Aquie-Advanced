@@ -82,6 +82,11 @@ export default new Command({
                 description: pages[currentPage] || "**This is Empty**"
             }
         ], components: [row]}).catch(() => {});
+
+        collector.on("end", (collected) => {
+            row.components[0].setDisabled(true);
+            row.components[1].setDisabled(true);
+        })
     
     }
 })

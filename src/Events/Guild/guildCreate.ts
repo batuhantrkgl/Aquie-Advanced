@@ -1,8 +1,8 @@
-import { client } from "../..";
 import { Event } from "../../Structures/Event";
+import { ExtendedGuild } from "../../Typings/client";
 
-export default new Event("guildCreate",(guild) => {
-    console.log(`${guild.name}Bir Sunucuya Eklendi.`);
-    client.db.addGuild(guild.id);
-    client.registerCommands(guild);
+export default new Event("guildCreate",(guild: ExtendedGuild) => {
+    console.log(`${guild.name} Sunucusuna Eklendi.`);
+    guild.client.db.addGuild(guild.id);
+    guild.client.registerCommands(guild);
 })

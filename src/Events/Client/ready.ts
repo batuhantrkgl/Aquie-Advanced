@@ -23,6 +23,8 @@ export default new Event("ready",async() => {
             client.db.removeGuild(guild.guild_id);
         }) 
     })
+
+    
     
 
 })
