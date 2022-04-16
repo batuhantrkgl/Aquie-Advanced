@@ -1,6 +1,6 @@
 import play_dl, { SoundCloudStream, YouTubeStream } from "play-dl";
 import { Guild, Message, TextBasedChannel, VoiceBasedChannel } from 'discord.js';
-import { AudioPlayer, AudioPlayerStatus, createAudioPlayer, createAudioResource, joinVoiceChannel, NoSubscriberBehavior, VoiceConnection } from '@discordjs/voice';
+import { AudioPlayer, AudioPlayerStatus, AudioResource, createAudioPlayer, createAudioResource, joinVoiceChannel, NoSubscriberBehavior, VoiceConnection } from '@discordjs/voice';
 import { AquieClient } from "./Client";
 import { Track } from "../Typings/player";
 import { NowPlayingEmbed } from "../Functions/Embed";
@@ -21,6 +21,7 @@ export class Queue {
     public repeatMode: QueueRepeatMode;
     public paused: boolean;
     private notPlayingTime: number;
+    private currentResource: AudioResource = null;
     
     constructor(guild: Guild, options: QueueOptions) {
         this.tracks = [];
@@ -60,13 +61,17 @@ export class Queue {
                     this.Play();
                     break;
             }
+        });
+
+        this.player.on("error",() => {
+            return;
         })
 
         this.queueDestroyListener();
 
     }
 
-    queueDestroyListener() {
+    private queueDestroyListener() {
         const interval = setInterval(() => {
             if (!this.client.player.queue.has(this.guild.id)) { clearInterval(interval); }
             if (this.playing == true) return this.notPlayingTime = 0;
@@ -99,16 +104,16 @@ export class Queue {
             if (newState.channel == null) {
                 if (!botChannel) return;
                 if (oldState.channel.id != botChannel.id) return;
-                if (botChannel.members.size != 1) return;
+                if (botChannel?.members.size != 1) return;
                 setTimeout(() => {
                     botChannel = this.guild.me.voice.channel;
-                    if (botChannel.members.size == 1) { this.Destroy(); }
+                    if (botChannel?.members.size == 1) { this.Destroy(); }
                 }, 5 * 10000);
             }
         })
     }
 
-    connect(channel: VoiceBasedChannel) {
+    public connect(channel: VoiceBasedChannel) {
         this.connection = joinVoiceChannel({
             channelId: channel.id,
             guildId: channel.guildId,
@@ -119,14 +124,12 @@ export class Queue {
         return this.connection;
     };
 
-
     private async spotifyToYoutube(track: Track): Promise<boolean> {
         const youtubeResult = await play_dl.search(`${track.artists[0].name} ${track.title}`, { limit: 1, source: { youtube: "video" } });
         if (youtubeResult.length == 0) return false;
         track.url = youtubeResult[0].url;
         return true;
     }
-
 
     public addTrack(track: Track): Track {
         this.tracks.push(track);
@@ -247,6 +250,20 @@ export class Queue {
         this.player?.play(resource);
     }
 
+    public get volume(): number {
+        return this.currentResource?.volume?.volume;
+    }
+
+    public setVolume(volume: number): boolean {
+        try {
+            this.currentResource?.volume?.setVolume(volume);
+            return true;
+        } catch(e) {
+            console.log(e);
+            return false;
+        }
+    }
+    
     public async Play(): Promise<void> {
         this.playing = true;
         const track = this.nowPlaying;
@@ -263,20 +280,21 @@ export class Queue {
             discordPlayerCompatibility: false
         });
 
-        const resource = createAudioResource(stream.stream, {
-            inputType: stream.type
+
+        this.currentResource = createAudioResource(stream.stream, {
+            inputType: stream.type,
+            inlineVolume: true
         });
 
-        this.player?.play(resource);
+        this.player?.play(this.currentResource);
     }
 
-    private Destroy(): void {
+    public Destroy(): void {
         this.player?.removeListener(AudioPlayerStatus.Idle, (oldState, newState) => {});
+        this.player?.stop();
         delete this.player;
         this.connection.disconnect();
-        this.player?.stop();
         this.client.player.queue.delete(this.guild.id)
     };
-
 
 }

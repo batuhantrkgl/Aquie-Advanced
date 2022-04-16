@@ -103,7 +103,7 @@ export class Player {
                 let spPlaylist: SpotifyPlaylist;
                 try {
                     spPlaylist = await play.spotify(query) as SpotifyPlaylist;
-                } catch (e) { return { type: null, tracks: null } };
+                } catch (e) { console.log(e); return { type: null, tracks: null } };
 
                 let spTracks: SpotifyTrack[] | Track[] = await spPlaylist.all_tracks();
 

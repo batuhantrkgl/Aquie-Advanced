@@ -172,43 +172,39 @@ export class Database {
     }
 
     public async saveQueue(dbUser: DBUser, playlist: Playlist): Promise<Playlist> {
-        
-        const dbPlaylist = dbUser.playlists?.map((value) => {
-            if(value.playlist_name.startsWith(playlist.playlist_name)) return value;
-        });
-       
-     
-        if(dbPlaylist.length == 1) {
+
+        const dbPlaylist = dbUser.playlists.filter((value) => value.playlist_name.startsWith(playlist.playlist_name));
+        if (dbPlaylist.length == 1) {
             playlist.playlist_name = `${playlist.playlist_name}(0)`;
         }
 
-        else if(dbPlaylist.length > 1) {
-            const lastIndex = dbPlaylist.map((value) => {
-                if(value.playlist_name.startsWith(playlist.playlist_name)) {
+        else if (dbPlaylist.length > 1) {
+            const lastIndex = dbPlaylist?.map((value) => {
+                if (value.playlist_name.startsWith(playlist.playlist_name)) {
                     const index = value.playlist_name[value.playlist_name.length - 2];
-                
-                    if(Number(index)) { return parseInt(index); }
-                    else if(index == "0") { return parseInt(index); }
+
+                    if (Number(index)) { return parseInt(index); }
+                    else if (index == "0") { return parseInt(index); }
                     return 0;
-                };                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      
+                };
             }).sort((a, b) => b - a);
 
-            
+
             playlist.playlist_name = `${playlist.playlist_name}(${(lastIndex[0] + 1).toString()})`;
         }
-        
+
         dbUser.playlists.push(playlist);
         await this.UserModel.updateOne({ user_id: dbUser.user_id }, { playlists: dbUser.playlists });
         return playlist;
 
     }
-    
+
     public async removeQueue(dbUser: DBUser, playlistName: string) {
         const index = dbUser.playlists.findIndex((value) => value.playlist_name === playlistName);
         dbUser.playlists.splice(index, 1);
-        await this.UserModel.updateOne({user_id: dbUser.user_id}, {playlists: dbUser.playlists});
-        if((await this.getUser(dbUser.user_id)).playlists.length == 0) {
-            await this.UserModel.deleteOne({user_id: dbUser.user_id});
+        await this.UserModel.updateOne({ user_id: dbUser.user_id }, { playlists: dbUser.playlists });
+        if ((await this.getUser(dbUser.user_id)).playlists.length == 0) {
+            await this.UserModel.deleteOne({ user_id: dbUser.user_id });
         }
     }
 

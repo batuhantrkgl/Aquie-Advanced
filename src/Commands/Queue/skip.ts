@@ -11,8 +11,8 @@ export default new Command({
         const queue = interaction.client.player.getQueue(interaction.guild);
         if (!queue) return interaction.followUp({ embeds: [Embed("There is no queue.", 3)] });
 
-        if(interaction.member.voice.channel.id != interaction.guild.me.voice.channel.id){
-            queue.connect(interaction.member.voice.channel);
+        if(interaction.member?.voice?.channel?.id != interaction.guild?.me?.voice?.channel?.id){
+            queue.connect(interaction.member.voice?.channel);
         }
         
         interaction.followUp({ embeds: [Embed("Song Skipped", 1)] });

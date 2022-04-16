@@ -47,7 +47,7 @@ export default new Command({
 
         const filter = i => i.user.id === interaction.user.id;
 
-        const collector = interaction.channel.createMessageComponentCollector({ filter, time: 120000 });
+        const collector = interaction.channel?.createMessageComponentCollector({ filter, time: 120000 });
 
         let currentPage: number = 0;
 
@@ -67,7 +67,7 @@ export default new Command({
                     break;
             }
 
-            await i.update({embeds: [
+            await i?.update({embeds: [
                 {
                     color: "WHITE",
                     description: pages[currentPage] || "**This is Empty**"
@@ -76,7 +76,7 @@ export default new Command({
             return;
         })
 
-        await interaction.followUp({embeds: [
+        await interaction?.followUp({embeds: [
             {
                 color: "WHITE",
                 description: pages[currentPage] || "**This is Empty**"
@@ -84,8 +84,8 @@ export default new Command({
         ], components: [row]}).catch(() => {});
 
         collector.on("end", (collected) => {
-            row.components[0].setDisabled(true);
-            row.components[1].setDisabled(true);
+            row.components.forEach((component) => component.setDisabled(true));
+            interaction?.editReply({components: [row]});
         })
     
     }

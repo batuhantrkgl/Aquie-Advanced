@@ -10,10 +10,14 @@ export type SearchOptions = {
 
 export type TrackTypes = "YOUTUBE" | "SPOTIFY";
 
+interface ArtistImage {
+    
+};
+
 export type Artist = {
     name: string,
     id?: string,
-    url?: string
+    url?: string,
 };
 
 export type Track = {

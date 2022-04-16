@@ -14,7 +14,7 @@ export default new Command({
             textChannel: interaction.channel
         });
         interaction.followUp({embeds: [Embed(`Connected to Channel  \`\` ${interaction.member.voice.channel.name} \`\``, 1)]});
-        queue.connect(interaction.member.voice.channel);
+        queue.connect(interaction.member?.voice?.channel);
         
     }
 })

@@ -8,8 +8,11 @@ export default new Event("ready",async() => {
     //Register Commands
     const servers: string[] = [];
     client.guilds.cache.forEach(async guild => {
-        client.registerCommands(guild).catch((e) => console.log(e));
-        client.log(`Commands Registered in ${guild.name}`)
+        if(client.commands.size != (await guild.commands.fetch()).size) {
+            await client.registerCommands(guild).catch((e) => console.log(e));
+            client.log(`Commands Registered in ${guild.name}`);
+        }
+
         //Database
         servers.push(guild.id);
         const dbGuild:DBGuild = await client.db.getGuild(guild.id);
