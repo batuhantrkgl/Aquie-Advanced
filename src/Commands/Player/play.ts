@@ -1,6 +1,7 @@
 import { Message } from "discord.js";
 import { Embed, NowPlayingEmbed } from "../../Functions/Embed";
 import { Command } from "../../Structures/Command";
+import { SearchResult } from "../../Typings/player";
 
 export default new Command({
     name: "play",
@@ -17,19 +18,20 @@ export default new Command({
     ],
     run: async ({ interaction }) => {
         const query = interaction.options.getString("query");
-        const result = await interaction.client.player.search(query, {
+        let result:SearchResult | null = await interaction.client.player.search(query, {
             requestBy: interaction.member,
             filter: ["search", "yt_video", "yt_playlist", "sp_track","sp_playlist", "sp_album","so_track"]
-        });
+        }).catch((e) => null);
 
         const queue = interaction.client.player.createQueue(interaction.guild, {
             textChannel: interaction.channel,
         });
 
-        queue.connect(interaction.member.voice.channel);
+        queue.connect(interaction.member?.voice?.channel);
 
-        switch (result.type) {
+        switch (result?.type) {
             case null:
+            case undefined:
                 interaction?.followUp({ embeds: [Embed("No Song Found", 3)] })
                 return;
             case "track":

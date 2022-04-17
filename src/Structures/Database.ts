@@ -203,6 +203,7 @@ export class Database {
         const index = dbUser.playlists.findIndex((value) => value.playlist_name === playlistName);
         dbUser.playlists.splice(index, 1);
         await this.UserModel.updateOne({ user_id: dbUser.user_id }, { playlists: dbUser.playlists });
+        
         if ((await this.getUser(dbUser.user_id)).playlists.length == 0) {
             await this.UserModel.deleteOne({ user_id: dbUser.user_id });
         }

@@ -169,6 +169,7 @@ export class Queue {
     public Back(): void {
         if (this.paused) { this.Resume(); }
         this.current -= 2;
+        if(!this.getTrack(this.current)) this.current = this.tracks.length - 1;
         this.Stop();
     }
 
